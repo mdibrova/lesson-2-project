@@ -27,4 +27,11 @@ public class XPathSimpleForm {
 
             $x("//div[starts-with(text(),'Казахстан')]").shouldHave(text("площадь 2 724 902"));
         }
+
+        @Test
+        void testTextSearch04 () {
+        open("https://slqa.ru/cases/xPathSimpleForm/");
+
+        $x("//div[contains(text(),'Воронеж')]").shouldHave(text("нет поступлений"));
+    }
 }
