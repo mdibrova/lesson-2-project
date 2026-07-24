@@ -14,9 +14,12 @@ public class IFrameTest {
         getWebDriver().manage().window().maximize();
 
         switchTo().frame($x("//*[@id='frame1']"));
-        $x("//*[@id='frame1']").click();
+        sleep(5_000);
+        $x("//h1")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("This is a sample page"));
 
-        //sleep(5_000);
-        //$x("//h1").shouldHave(text("This is a sample page"));
+        switchTo().defaultContent();
     }
 }

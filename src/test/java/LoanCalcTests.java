@@ -1,5 +1,8 @@
 import com.codeborne.selenide.*;
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -81,6 +84,11 @@ public class LoanCalcTests {
                 .shouldBe(visible)
                 .shouldHave(text("108000.05"));
 
+        $x("//span[@id='overpayment']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("11200008.10"));
+
         $x("//span[@id='total-payment']")
                 .shouldBe(exist)
                 .shouldBe(visible)
@@ -121,12 +129,31 @@ public class LoanCalcTests {
                 .shouldBe(visible)
                 .shouldHave(text("Аннуитетный"));
 
-        //$x("//tr[2]/td[2]") //и цикл до 150
-        //.shouldBe(exist)
-        //.shouldBe(visible)
-        //        .sendKeys("108000.05");
+        $x("//tr[2]/td[2]")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("108000.05"));
+        //и цикл до 150. Через массив или коллекции?
 
-        //Проверка Основного долга, процентов и остатка долга-? //
+        $x("//tr[2]/td[3]")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("108000.05"));
+
+        $x("//tr[2]/td[50]")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("108000.05"));
+
+        $x("//tr[2]/td[100]")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("108000.05"));
+
+        $x("//tr[2]/td[150]")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("108000.05"));
 
         Selenide.closeWindow();
 
@@ -142,10 +169,82 @@ public class LoanCalcTests {
 
     }
 
-    //@Test
     /*Добавить 2-й параметризованный автотест, который проверит расчёт для разных сроков кредита - Сложность чуть выше среднего */
-    //void fillingCellsTest02(){    }
+    @ParameterizedTest
+    @ValueSource(strings = {"10","50","250","360"})
+    void parameterizedTest02(String term) {
+        $x("//input[@id='amount']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .sendKeys("5000000");
 
+        $x("//input[@id='term']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .sendKeys(term);
+
+        $x("//input[@id='rate']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .sendKeys("24.7");
+
+        $x("//input[@value='annuity']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .click();
+
+        $x("//button[contains(text(),'Рассчитать')]")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .click();
+
+        Configuration.timeout = 12000;
+
+        $x("//h2[contains(text(),'Результаты расчёта')]")
+                .shouldBe(exist)
+                .shouldBe(visible);
+
+        $x("//span[@id='result-amount']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("5000000.00"));
+
+        $x("//span[@id='result-term']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text(term));
+
+        $x("//span[@id='result-rate']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("24.7"));
+
+        $x("//span[@id='result-payment-type']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("Аннуитетный"));
+/*
+        $x("//span[@id='monthly-payment']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("108000.05"));
+
+        $x("//span[@id='overpayment']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("11200008.10"));
+
+        $x("//span[@id='total-payment']")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .shouldHave(text("16200008.10"));
+*/
+
+        $x("//button[contains(text(),'Выполнить новый расчёт')]")
+                .shouldBe(exist)
+                .shouldBe(visible)
+                .click();
+    }
     /*напишите полный набор автотестов для тестирования этого кредитного калькулятора - Наибольшая сложность */
 
 }
